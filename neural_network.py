@@ -1,17 +1,19 @@
 import numpy as np
 
+LAYERS = []
+
 class Layer:
-    Layers = []
     def __init__(self, dim : int):
         self.dim = dim
 
-        # Create neurons and biases matrices
+        # Instantiate neurons and biases matrices
         self.neurons = np.zeros((dim, 1))
         self.biases = np.zeros((dim, 1))
 
-        # Create weights matrix to calculate this layer's neurons based on previous layer's dim
-        if Layer.Layers:
-            self.previous_layer = Layer.Layers[-1]
+        # Create m x n (L2 neuron count x L1 neuron count) weights matrix using He init.
+        #
+        if LAYERS:
+            self.previous_layer = LAYERS[-1]
             previous_dim = self.previous_layer.dim
             self.weights = He_initialization(dim, previous_dim)
 
@@ -20,7 +22,7 @@ class Layer:
             self.previous_layer, self.weights = None, None
 
         # Append to layer sequence (to be able to reference previous layers)
-        Layer.Layers.append(self)
+        LAYERS.append(self)
 
     def compute_neurons(self):
         # L1 should be from dataset and never computed
@@ -30,7 +32,7 @@ class Layer:
         # Multiply weights and input neurons
         weighted_sum = (self.weights @ self.previous_layer.neurons) + self.biases
         # Apply ReLU for all layers except last, which uses Softmax
-        if self == Layer.Layers[-1]:
+        if self == LAYERS[-1]:
             activated_sum = softmax(weighted_sum)
         else:
             activated_sum = ReLU(weighted_sum)
@@ -59,7 +61,9 @@ def ReLU(weighted_sum : np.ndarray) -> np.ndarray:
     return activated_sum
 
 def softmax(weighted_sum : np.ndarray) -> np.ndarray:
+    # Stabilize the sum by subtracting the max value in the array - prevents overflow
     stabilized_sum = weighted_sum - np.max(weighted_sum)
     stabilized_exp = np.exp(stabilized_sum)
     activated_sum = stabilized_exp / np.sum(stabilized_exp)
     return activated_sum
+

@@ -1,17 +1,12 @@
 from mnist import MNIST
-from nn_layers import *
-
-def find_loss(label : int, output_neurons : np.array) -> int:
-    """
-    Ideal values are as follows (top - down): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    """
-
+from neural_network import *
+from cost_functions import *
 
 def main():
     # Initialize training dataset
     raw_data = MNIST('mnist_ds')
     images, labels = raw_data.load_training()
-    image_count = len(images)
+    training_set_size = len(images)
 
     # Instantiate the first layer
     l1_neurons = raw_data.process_images_to_lists(images[0])
@@ -19,20 +14,27 @@ def main():
     L1 = Layer(L1_dimension)
 
     # Instantiate all other layers
-    L2 = Layer(16)
-    L3 = Layer(16)
-    L4 = Layer(10)
-    neural_network = [L2, L3, L4]
+    L2, L3, L4 = Layer(16), Layer(16), Layer(10)
 
-    total_cost = 0
-    for i in range(image_count):
+    # Track total loss as each data point is processed
+    total_loss = 0
+
+    # Run the neural network on all training data points
+    for i in range(training_set_size):
         image = images[i]
         label = labels[i]
-        l1_neurons = raw_data.process_images_to_lists(image)
 
+        l1_neurons = raw_data.process_images_to_lists(image)
         L1.update_neurons(l1_neurons)
-        for layer in neural_network:
+
+        for layer in LAYERS[1:]:
             layer.compute_neurons()
+        output_neurons = L4.neurons
+
+        total_loss += get_loss(label, output_neurons)
+
+    cost = get_cost(total_loss, training_set_size)
+    print(cost)
 
 
 if __name__ == "__main__":

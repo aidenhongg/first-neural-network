@@ -1,15 +1,27 @@
 import numpy as np
 from mnist import MNIST
 
+def find_loss(label : int, output_neurons : np.array) -> int:
+    """
+    Ideal values are as follows (top - down): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    """
+
+
+
 def He_initialization(current_dim, previous_dim):
     std_dev = np.sqrt(2.0 / previous_dim)
     weights = np.random.normal(loc = 0.0, scale = std_dev, size = (current_dim, previous_dim))
     return weights
 
-
-def ReLU(weighted_sum : np.ndarray):
+def ReLU(weighted_sum : np.ndarray) -> np.ndarray:
     activated_sum = np.copy(weighted_sum)
     activated_sum[activated_sum < 0] = 0
+    return activated_sum
+
+def softmax(weighted_sum : np.ndarray) -> np.ndarray:
+    stabilized_sum = weighted_sum - np.max(weighted_sum)
+    stabilized_exp = np.exp(stabilized_sum)
+    activated_sum = stabilized_exp / np.sum(stabilized_exp)
     return activated_sum
 
 class Layer:
@@ -41,8 +53,11 @@ class Layer:
 
         # Multiply weights and input neurons
         weighted_sum = (self.weights @ self.previous_layer.neurons) + self.biases
-        # Apply ReLU
-        activated_sum = ReLU(weighted_sum)
+        # Apply ReLU for all layers except last - last uses Softmax
+        if self == Layer.Layers[-1]:
+            activated_sum = softmax(weighted_sum)
+        else:
+            activated_sum = ReLU(weighted_sum)
         # Update this layers' neurons
         self.update_neurons(activated_sum)
 
@@ -74,17 +89,17 @@ def main():
     L4 = Layer(10)
     neural_network = [L2, L3, L4]
 
-    """
+    total_cost = 0
     for i in range(image_count):
         image = images[i]
-        label = images[i]
+        label = labels[i]
         l1_neurons = raw_data.process_images_to_lists(image)
 
 
         L1.update_neurons(l1_neurons)
         for layer in neural_network:
             layer.compute_neurons()
-    """
+
 
 if __name__ == "__main__":
     main()

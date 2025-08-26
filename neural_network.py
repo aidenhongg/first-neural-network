@@ -67,3 +67,22 @@ def softmax(weighted_sum : np.ndarray) -> np.ndarray:
     activated_sum = stabilized_exp / np.sum(stabilized_exp)
     return activated_sum
 
+
+"""
+derived functions to be refactored
+"""
+def RelU_der(weighted_sum : np.ndarray) -> np.ndarray:
+    derived_sum = np.copy(weighted_sum)
+    derived_sum[derived_sum <= 0] = 0
+    derived_sum[derived_sum > 0] = 1
+
+    return derived_sum
+
+def softmax_der(weighted_sum : np.ndarray) -> np.ndarray:
+    # Stabilize the sum by subtracting the max value in the array - prevents overflow
+    stabilized_sum = weighted_sum - np.max(weighted_sum)
+    stabilized_exp = np.exp(stabilized_sum)
+    activated_sum = stabilized_exp / np.sum(stabilized_exp)
+    return activated_sum
+
+

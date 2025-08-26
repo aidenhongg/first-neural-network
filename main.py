@@ -31,7 +31,7 @@ def main():
             layer.compute_neurons()
         output_neurons = L4.neurons
 
-        total_loss += get_loss(label, output_neurons)
+        total_loss += get_CCE(label, output_neurons)
 
     cost = get_cost(total_loss, training_set_size)
     print(cost)

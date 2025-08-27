@@ -1,6 +1,7 @@
 import numpy as np
+import neural_network as nn
 
-def get_CCE(label : int, output_neurons : np.array) -> float:
+def get_CCE(output_neurons : np.array) -> float:
     """
     Ideal values hot-coded as follows (top - down): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     Loss here uses CCE, which is equivalent to -1 * sum(ideal * ln(real))
@@ -10,11 +11,8 @@ def get_CCE(label : int, output_neurons : np.array) -> float:
     epsilon = 10 **(-15)
     output_neurons += epsilon
 
-    # Instantiate one hot-coded vector
-    hot_encoded = np.array([int(i == label) for i in range(10)]).reshape(-1, 1)
-
     # get the CCE vector
-    CCE = hot_encoded * np.log(output_neurons)
+    CCE = nn.current_label * np.log(output_neurons)
 
     loss = -1 * np.sum(CCE)
     return loss

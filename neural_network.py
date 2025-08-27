@@ -2,6 +2,9 @@ import numpy as np
 
 LAYERS = []
 
+# This label is one hot-encoded
+current_label = None
+
 class Layer:
     def __init__(self, dim : int):
         self.dim = dim
@@ -11,7 +14,6 @@ class Layer:
         self.biases = np.zeros((dim, 1))
 
         # Create m x n (L2 neuron count x L1 neuron count) weights matrix using He init.
-        #
         if LAYERS:
             self.previous_layer = LAYERS[-1]
             previous_dim = self.previous_layer.dim
@@ -50,6 +52,10 @@ class Layer:
 
         self.neurons = neurons
 
+def update_label(label):
+    global current_label
+    current_label = label
+
 def He_initialization(current_dim, previous_dim):
     std_dev = np.sqrt(2.0 / previous_dim)
     weights = np.random.normal(loc = 0.0, scale = std_dev, size = (current_dim, previous_dim))
@@ -61,24 +67,6 @@ def ReLU(weighted_sum : np.ndarray) -> np.ndarray:
     return activated_sum
 
 def softmax(weighted_sum : np.ndarray) -> np.ndarray:
-    # Stabilize the sum by subtracting the max value in the array - prevents overflow
-    stabilized_sum = weighted_sum - np.max(weighted_sum)
-    stabilized_exp = np.exp(stabilized_sum)
-    activated_sum = stabilized_exp / np.sum(stabilized_exp)
-    return activated_sum
-
-
-"""
-derived functions to be refactored
-"""
-def RelU_der(weighted_sum : np.ndarray) -> np.ndarray:
-    derived_sum = np.copy(weighted_sum)
-    derived_sum[derived_sum <= 0] = 0
-    derived_sum[derived_sum > 0] = 1
-
-    return derived_sum
-
-def softmax_der(weighted_sum : np.ndarray) -> np.ndarray:
     # Stabilize the sum by subtracting the max value in the array - prevents overflow
     stabilized_sum = weighted_sum - np.max(weighted_sum)
     stabilized_exp = np.exp(stabilized_sum)

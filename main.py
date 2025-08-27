@@ -1,6 +1,8 @@
-from mnist import MNIST
 import neural_network as nn
+import backpropagation as bp
 from cost_functions import *
+from mnist import MNIST
+
 
 def main():
     # Initialize training dataset
@@ -33,8 +35,15 @@ def main():
         output_neurons = L4.neurons
         total_loss += get_CCE(output_neurons)
 
+        for layer in nn.LAYERS[::-1]:
+            bp.backpropagate(layer)
+
+        break
+
+
     cost = get_cost(total_loss, training_set_size)
     print(cost)
+
 
 
 if __name__ == "__main__":

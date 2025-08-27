@@ -32,7 +32,7 @@ class Layer:
             raise Exception("Cannot compute L1 neurons.")
 
         # Multiply weights and input neurons
-        weighted_sum = (self.weights @ self.previous_layer.neurons) + self.biases
+        weighted_sum = self.get_weighted_sum()
         # Apply ReLU for all layers except last, which uses Softmax
         if self == LAYERS[-1]:
             activated_sum = softmax(weighted_sum)
@@ -40,6 +40,9 @@ class Layer:
             activated_sum = ReLU(weighted_sum)
         # Update this layers' neurons
         self.update_neurons(activated_sum)
+
+    def get_weighted_sum(self):
+        return (self.weights @ self.previous_layer.neurons) + self.biases
 
     def update_neurons(self, neurons : list | np.ndarray):
         # Make n x 1 column vector from list. Reject if the dimension is incorrect

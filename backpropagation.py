@@ -1,6 +1,7 @@
 import neural_network as nn
 import numpy as np
-import label as lb
+from neural_network import label as lb
+
 
 error_signal : np.ndarray = None
 next_layer : nn.Layer = None

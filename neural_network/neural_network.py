@@ -1,5 +1,5 @@
 import numpy as np
-from nn_functions import *
+from neural_network.nn_functions import *
 
 LAYERS = []
 

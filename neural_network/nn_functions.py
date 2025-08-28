@@ -1,5 +1,5 @@
 import numpy as np
-import label as lb
+import neural_network.label as lb
 
 def get_CCE(output_neurons : np.array) -> float:
     """

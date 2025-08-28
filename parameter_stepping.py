@@ -1,7 +1,7 @@
 import numpy as np
 
 # Hyperparameter (beta) for EWMA - should be close to 1
-HYPERPARAM : float = 0
+HYPERPARAM : float = 0.94
 
 class EWMA:
     _instances = []

@@ -1,21 +1,20 @@
-import mnist
+from mnist import MNIST
+
+import numpy as np
 
 import neural_network as nn
 import backpropagation as bp
 import parameter_stepping as step
-import label as lb
 
-from nn_functions import *
-from mnist import MNIST
 
 # Batch size between each gradient adjustment
 BATCH_SIZE : int = 32
 
 # Step size
-STEP_SIZE : float = 0.1
+STEP_SIZE : float = 0.0005
 
 # Dataset
-RAW_DATA : mnist.MNIST = mnist.MNIST()
+RAW_DATA : MNIST = MNIST()
 
 # Patience
 PATIENCE : int = 5
@@ -44,8 +43,8 @@ def validate_nn(neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
     testing_size = len(images)
     total_loss = run_batch(0, True, neural_net, images,
                            labels, 0)
-    cost = get_cost(total_loss, testing_size)
-    print(cost)
+    cost = nn.get_cost(total_loss, testing_size)
+    return cost
 
 
 def run_batch(current_batch_index : int, is_validating : bool,
@@ -58,6 +57,7 @@ def run_batch(current_batch_index : int, is_validating : bool,
         batch_range = range(current_batch_index * BATCH_SIZE,
                             (current_batch_index + 1) * BATCH_SIZE)
 
+    correct_count = 0
     L1, L2, L3, L4 = neural_net
     for i in batch_range:
         if i >= dataset_size:
@@ -65,7 +65,7 @@ def run_batch(current_batch_index : int, is_validating : bool,
 
         label = labels[i]
         encoded_label = np.array([int(i == label) for i in range(10)]).reshape(-1, 1)
-        lb.update_label(encoded_label)
+        nn.update_label(encoded_label)
 
         image = images[i]
         l1_neurons = RAW_DATA.process_images_to_lists(image)
@@ -76,14 +76,17 @@ def run_batch(current_batch_index : int, is_validating : bool,
             layer.compute_neurons()
 
         output_neurons = L4.neurons
-        total_loss += get_CCE(output_neurons)
+        if is_validating:
+            correct_count += int(output_neurons.flatten().tolist().index(max(output_neurons.flatten().tolist())) == label)
+        total_loss += nn.get_CCE(output_neurons)
 
         # Backpropagation
         if not is_validating:
             for layer, gradient in gradients.items():
                 dW, db = bp.backpropagate(layer)
                 gradient.add_gradient(dW, db)
-
+    if is_validating:
+        print(correct_count / dataset_size)
     return total_loss
 
 
@@ -92,19 +95,31 @@ def main():
     global RAW_DATA
     RAW_DATA = MNIST('mnist_ds')
     images, labels = RAW_DATA.load_training()
-    training_size = len(images)
 
     # Instantiate all layers
     L1_dimension = len(RAW_DATA.process_images_to_lists(images[0]))
     neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
 
-    # Train the neural network
-    train_nn(neural_net, images, labels)
+    lowest_cost = np.inf
+    patience_counter =  0
+    while True:
+        # Train the neural network
+        train_nn(neural_net, images, labels)
 
-    # Validate neural network
-    test_images, test_labels = RAW_DATA.load_testing()
-    validate_nn(neural_net, test_images, test_labels)
+        # Validate neural network
+        test_images, test_labels = RAW_DATA.load_testing()
+        cost = validate_nn(neural_net, test_images, test_labels)
 
+        print(cost)
+        if cost < lowest_cost:
+            lowest_cost = cost
+            patience_counter = 0
+
+        else:
+            patience_counter += 1
+
+        if patience_counter >= PATIENCE:
+            break
 
 
 if __name__ == "__main__":

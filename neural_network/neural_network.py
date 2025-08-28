@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 from neural_network.nn_functions import *
 
 LAYERS = []
@@ -57,12 +58,11 @@ class Layer:
         self.weights = self.weights - (dW * step)
         self.biases = self.biases - (db * step)
 
-    @classmethod
-    def update_LAYERS(cls, layers: list):
-        LAYERS.extend(layers)
 
 
 def He_initialization(current_dim, previous_dim):
+    seed = np.random.randint(sys.maxsize)
+    np.random.seed(seed)
     std_dev = np.sqrt(2.0 / previous_dim)
     weights = np.random.normal(loc = 0.0, scale = std_dev, size = (current_dim, previous_dim))
     return weights

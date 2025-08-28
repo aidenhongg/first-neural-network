@@ -1,7 +1,6 @@
 from mnist import MNIST
 
 import numpy as np
-import pickle
 
 import neural_network as nn
 
@@ -24,7 +23,7 @@ RAW_DATA : MNIST = MNIST()
 PATIENCE : int = 5
 
 # Load past-initialized weights for testing
-LOAD_TESTING = False
+LOAD_STATE = False
 
 def train_nn(neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
              images : list, labels : list):
@@ -112,20 +111,7 @@ def main():
     # Instantiate all layers
     L1_dimension = len(RAW_DATA.process_images_to_lists(images[0]))
 
-    if LOAD_TESTING:
-        loaded_layers = []
-        for layer in range(1, LAYER_COUNT + 1):
-            with open(f"./pickled_weights/L{layer}.pkl", 'rb') as file:
-                loaded_layers.append(pickle.load(file))
-
-        nn.Layer.update_LAYERS(loaded_layers)
-        neural_net = tuple(loaded_layers)
-
-    else:
-        neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
-        for layer in range(1, LAYER_COUNT + 1):
-            with open(f"./pickled_weights/L{layer}.pkl", 'wb') as file:
-                pickle.dump(neural_net[layer - 1], file)
+    neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
 
     lowest_cost = np.inf
     patience_counter =  0

@@ -1,5 +1,6 @@
 import neural_network as nn
 import numpy as np
+import label as lb
 
 error_signal : np.ndarray = None
 next_layer : nn.Layer = None
@@ -32,7 +33,7 @@ def ReLU_der(weighted_sum : np.ndarray) -> np.ndarray:
 
 def CCE_softmax_der(L : nn.Layer) -> np.ndarray:
     # Using Softmax & CCE on the last layer greatly simplifies the derivative
-    return L.neurons - nn.current_label
+    return L.neurons - lb.current_label
 
 def dz_dw(L : nn.Layer) -> np.ndarray:
      return L.neurons.T

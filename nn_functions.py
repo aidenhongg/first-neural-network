@@ -1,5 +1,5 @@
 import numpy as np
-import neural_network as nn
+import label as lb
 
 def get_CCE(output_neurons : np.array) -> float:
     """
@@ -12,7 +12,7 @@ def get_CCE(output_neurons : np.array) -> float:
     output_neurons += epsilon
 
     # get the CCE vector
-    CCE = nn.current_label * np.log(output_neurons)
+    CCE = lb.current_label * np.log(output_neurons)
 
     loss = -1 * np.sum(CCE)
     return loss
@@ -20,3 +20,14 @@ def get_CCE(output_neurons : np.array) -> float:
 def get_cost(total_loss : float, training_set_size : int) -> float:
     return total_loss / training_set_size
 
+def ReLU(weighted_sum : np.ndarray) -> np.ndarray:
+    activated_sum = np.copy(weighted_sum)
+    activated_sum[activated_sum < 0] = 0
+    return activated_sum
+
+def softmax(weighted_sum : np.ndarray) -> np.ndarray:
+    # Stabilize the sum by subtracting the max value in the array - prevents overflow
+    stabilized_sum = weighted_sum - np.max(weighted_sum)
+    stabilized_exp = np.exp(stabilized_sum)
+    activated_sum = stabilized_exp / np.sum(stabilized_exp)
+    return activated_sum

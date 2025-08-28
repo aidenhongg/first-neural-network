@@ -1,8 +1,7 @@
 import numpy as np
-LAYERS = []
+from nn_functions import *
 
-# This label is one hot-encoded
-current_label = None
+LAYERS = []
 
 class Layer:
     def __init__(self, dim : int):
@@ -59,25 +58,9 @@ class Layer:
         self.biases = self.biases - (db * step)
 
 
-
-def update_label(label):
-    global current_label
-    current_label = label
-
 def He_initialization(current_dim, previous_dim):
     std_dev = np.sqrt(2.0 / previous_dim)
     weights = np.random.normal(loc = 0.0, scale = std_dev, size = (current_dim, previous_dim))
     return weights
 
-def ReLU(weighted_sum : np.ndarray) -> np.ndarray:
-    activated_sum = np.copy(weighted_sum)
-    activated_sum[activated_sum < 0] = 0
-    return activated_sum
-
-def softmax(weighted_sum : np.ndarray) -> np.ndarray:
-    # Stabilize the sum by subtracting the max value in the array - prevents overflow
-    stabilized_sum = weighted_sum - np.max(weighted_sum)
-    stabilized_exp = np.exp(stabilized_sum)
-    activated_sum = stabilized_exp / np.sum(stabilized_exp)
-    return activated_sum
 

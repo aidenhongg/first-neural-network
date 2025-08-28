@@ -1,5 +1,4 @@
 import numpy as np
-
 LAYERS = []
 
 # This label is one hot-encoded
@@ -55,6 +54,12 @@ class Layer:
 
         self.neurons = neurons
 
+    def update_params(self, dW : np.ndarray, db : np.ndarray, step : float):
+        self.weights = self.weights - (dW * step)
+        self.biases = self.biases - (db * step)
+
+
+
 def update_label(label):
     global current_label
     current_label = label
@@ -75,5 +80,4 @@ def softmax(weighted_sum : np.ndarray) -> np.ndarray:
     stabilized_exp = np.exp(stabilized_sum)
     activated_sum = stabilized_exp / np.sum(stabilized_exp)
     return activated_sum
-
 

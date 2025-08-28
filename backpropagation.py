@@ -1,28 +1,27 @@
 import neural_network as nn
 import numpy as np
 
-"""
-derived functions to be refactored
-"""
-error_signal = 0
-next_layer = None
+error_signal : np.ndarray = None
+next_layer : nn.Layer = None
 
-def backpropagate(L  : nn.Layer):
+def backpropagate(L : nn.Layer) -> tuple[np.ndarray, np.ndarray]:
     global error_signal
     global next_layer
 
     if L == nn.LAYERS[-1]:
         error_signal = CCE_softmax_der(L)
-        dC_dw = error_signal @ dz_dw(L)
+        dC_dw = error_signal @ dz_dw(L.previous_layer)
 
     else:
         weighted_sum = L.get_weighted_sum()
         error_signal = (next_layer.weights.T @ error_signal) * ReLU_der(weighted_sum)
-        dC_dw = error_signal @ dz_dw(L)
+        dC_dw = error_signal @ dz_dw(L.previous_layer)
 
-    return dC_dw
-
-
+    # This layer is now the successive layer in the NN to the
+    # next layer that will be backpropagated
+    next_layer = L
+    # Error signal is equivalent to db
+    return dC_dw, error_signal
 
 def ReLU_der(weighted_sum : np.ndarray) -> np.ndarray:
     derived_sum = np.copy(weighted_sum)
@@ -36,6 +35,4 @@ def CCE_softmax_der(L : nn.Layer) -> np.ndarray:
     return L.neurons - nn.current_label
 
 def dz_dw(L : nn.Layer) -> np.ndarray:
-     L_sub_1 = L.previous_layer
-     L_sub_T = L_sub_1.neurons.T
-     return L_sub_T
+     return L.neurons.T

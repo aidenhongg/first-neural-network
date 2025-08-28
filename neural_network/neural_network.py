@@ -57,6 +57,10 @@ class Layer:
         self.weights = self.weights - (dW * step)
         self.biases = self.biases - (db * step)
 
+    @classmethod
+    def update_LAYERS(cls, layers: list):
+        LAYERS.extend(layers)
+
 
 def He_initialization(current_dim, previous_dim):
     std_dev = np.sqrt(2.0 / previous_dim)

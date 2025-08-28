@@ -1,11 +1,15 @@
 from mnist import MNIST
 
 import numpy as np
+import pickle
 
 import neural_network as nn
+
 import backpropagation as bp
 import parameter_stepping as step
 
+# Layer count
+LAYER_COUNT = 4
 
 # Batch size between each gradient adjustment
 BATCH_SIZE : int = 32
@@ -18,6 +22,9 @@ RAW_DATA : MNIST = MNIST()
 
 # Patience
 PATIENCE : int = 5
+
+# Load past-initialized weights for testing
+LOAD_TESTING = False
 
 def train_nn(neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
              images : list, labels : list):
@@ -76,6 +83,8 @@ def run_batch(current_batch_index : int, is_validating : bool,
             layer.compute_neurons()
 
         output_neurons = L4.neurons
+
+        # Bulky statement for testing - please revise
         if is_validating:
             correct_count += int(output_neurons.flatten().tolist().index(max(output_neurons.flatten().tolist())) == label)
         total_loss += nn.get_CCE(output_neurons)
@@ -85,6 +94,7 @@ def run_batch(current_batch_index : int, is_validating : bool,
             for layer, gradient in gradients.items():
                 dW, db = bp.backpropagate(layer)
                 gradient.add_gradient(dW, db)
+    # Also please revise
     if is_validating:
         print(correct_count / dataset_size)
     return total_loss
@@ -96,9 +106,26 @@ def main():
     RAW_DATA = MNIST('mnist_ds')
     images, labels = RAW_DATA.load_training()
 
+    # Initialize training dataset
+    test_images, test_labels = RAW_DATA.load_testing()
+
     # Instantiate all layers
     L1_dimension = len(RAW_DATA.process_images_to_lists(images[0]))
-    neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
+
+    if LOAD_TESTING:
+        loaded_layers = []
+        for layer in range(1, LAYER_COUNT + 1):
+            with open(f"./pickled_weights/L{layer}.pkl", 'rb') as file:
+                loaded_layers.append(pickle.load(file))
+
+        nn.Layer.update_LAYERS(loaded_layers)
+        neural_net = tuple(loaded_layers)
+
+    else:
+        neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
+        for layer in range(1, LAYER_COUNT + 1):
+            with open(f"./pickled_weights/L{layer}.pkl", 'wb') as file:
+                pickle.dump(neural_net[layer - 1], file)
 
     lowest_cost = np.inf
     patience_counter =  0
@@ -107,7 +134,6 @@ def main():
         train_nn(neural_net, images, labels)
 
         # Validate neural network
-        test_images, test_labels = RAW_DATA.load_testing()
         cost = validate_nn(neural_net, test_images, test_labels)
 
         print(cost)
@@ -120,6 +146,12 @@ def main():
 
         if patience_counter >= PATIENCE:
             break
+
+        # Shuffle before next epoch for SGD
+        # combined_array = list(zip(images, labels))
+        # np.random.shuffle(combined_array)
+        # images, labels = zip(*combined_array)
+
 
 
 if __name__ == "__main__":

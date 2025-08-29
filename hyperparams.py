@@ -16,4 +16,5 @@ RAW_DATA : MNIST = MNIST()
 PATIENCE : int = 5
 
 # Load past-initialized weights for testing
-LOAD_STATE = False
+LOAD_SEED : bool = False
+SEED : int = 0

@@ -22,10 +22,10 @@ def train_nn(gradients, neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Laye
 def validate_nn(neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
              images : list, labels : list):
     testing_size = len(images)
-    total_loss = run_batch(0, True, neural_net, images,
+    accuracy, total_loss = run_batch(0, True, neural_net, images,
                            labels, 0)
     cost = nn.get_cost(total_loss, testing_size)
-    return cost
+    return accuracy, cost
 
 
 def run_batch(current_batch_index : int, is_validating : bool,
@@ -66,7 +66,12 @@ def run_batch(current_batch_index : int, is_validating : bool,
 
         # Bulky statement for testing - please revise
         if is_validating:
-            correct_count += int(output_neurons.flatten().tolist().index(max(output_neurons.flatten().tolist())) == label)
+            output_list = output_neurons.flatten().tolist()
+            max_value = max(output_list)
+            selection = output_list.index(max_value)
+
+            correct_count += int(selection == label)
+
         total_loss += nn.get_CCE(output_neurons)
 
         # Backpropagation
@@ -92,7 +97,6 @@ def run_batch(current_batch_index : int, is_validating : bool,
 
             gradient.add_gradient(dW_average, db_average)
 
-    # Also please revise
     if is_validating:
-        print(correct_count / dataset_size)
-    return total_loss
+        return correct_count / dataset_size, total_loss
+    return None, total_loss

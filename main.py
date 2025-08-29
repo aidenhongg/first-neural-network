@@ -23,16 +23,18 @@ def main():
     gradients = {L4: step.EWMA(), L3: step.EWMA(), L2: step.EWMA()}
 
     lowest_cost = 999999
-    patience_counter =  0
+    patience_counter = 0
     while True:
         # Train the neural network
         train_nn(gradients, neural_net, images, labels)
 
         # Validate neural network
-        cost = validate_nn(neural_net, test_images, test_labels)
+        accuracy, cost = validate_nn(neural_net, test_images, test_labels)
 
+        print(accuracy)
         print(cost)
-        if cost < lowest_cost:
+        # Buffer to only track meaningful improvements
+        if cost < lowest_cost - 0.001:
             lowest_cost = cost
             patience_counter = 0
 
@@ -46,6 +48,9 @@ def main():
         shuffled_labels = list(zip(images, labels))
         np.random.shuffle(shuffled_labels)
         images, labels = zip(*shuffled_labels)
+
+
+    return accuracy, lowest_cost, hp.SEED
 
 
 

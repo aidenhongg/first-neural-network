@@ -1,6 +1,9 @@
 import numpy as np
 import sys
+import hyperparams as hp
+
 from neural_network.nn_functions import *
+
 
 LAYERS = []
 
@@ -16,7 +19,16 @@ class Layer:
         if LAYERS:
             self.previous_layer = LAYERS[-1]
             previous_dim = self.previous_layer.dim
-            self.weights = He_initialization(dim, previous_dim)
+
+            # Initialize weights using seed if option True, don't if not
+            if hp.LOAD_SEED and len(LAYERS) == 1:
+                self.weights, seed = He_initialization(dim, previous_dim, hp.SEED)
+            else:
+                self.weights, seed = He_initialization(dim, previous_dim)
+                # Send back to hyperparameters the first seed we initialize
+                if len(LAYERS) == 1:
+                    hp.SEED = seed
+
 
         # If this is L1 then there will be no weights matrix
         else:
@@ -60,11 +72,12 @@ class Layer:
 
 
 
-def He_initialization(current_dim, previous_dim):
-    seed = np.random.randint(0, 2147483647)
+def He_initialization(current_dim, previous_dim, seed = 0):
+    if not seed:
+        seed = np.random.randint(1, 2147483647)
     np.random.seed(seed)
     std_dev = np.sqrt(2.0 / previous_dim)
     weights = np.random.normal(loc = 0.0, scale = std_dev, size = (current_dim, previous_dim))
-    return weights
+    return weights, seed
 
 

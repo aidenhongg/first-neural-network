@@ -2,14 +2,12 @@ import numpy as np
 
 import neural_network as nn
 import backpropagation as bp
-import parameter_stepping as step
 import hyperparams as hp
 
 
 def train_nn(gradients, neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
              images : list, labels : list):
     training_size = len(images)
-    L1, L2, L3, L4 = neural_net
 
     for x in range(int(training_size / hp.BATCH_SIZE) + 1):
         # Train the neural network on a single batch

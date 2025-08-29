@@ -7,7 +7,7 @@ LAYER_COUNT = 4
 BATCH_SIZE : int = 32
 
 # Step size
-STEP_SIZE : float = 0.0005
+STEP_SIZE : float = 0.0001
 
 # Dataset
 RAW_DATA : MNIST = MNIST()

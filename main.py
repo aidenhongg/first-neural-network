@@ -43,9 +43,9 @@ def main():
             break
 
         # Shuffle before next epoch for SGD
-        # combined_array = list(zip(images, labels))
-        # np.random.shuffle(combined_array)
-        # images, labels = zip(*combined_array)
+        shuffled_labels = list(zip(images, labels))
+        np.random.shuffle(shuffled_labels)
+        images, labels = zip(*shuffled_labels)
 
 
 

@@ -34,12 +34,18 @@ def run_batch(current_batch_index : int, is_validating : bool,
     dataset_size = len(images)
     if is_validating:
         batch_range = range(dataset_size)
+
     else:
         batch_range = range(current_batch_index * hp.BATCH_SIZE,
                             (current_batch_index + 1) * hp.BATCH_SIZE)
+        batch_averages = {}
+        for layer in gradients.keys():
+            batch_averages[layer] = ["dW", "db"]
 
+    examples_analyzed = 0
     correct_count = 0
     L1, L2, L3, L4 = neural_net
+
     for i in batch_range:
         if i >= dataset_size:
             break
@@ -67,7 +73,25 @@ def run_batch(current_batch_index : int, is_validating : bool,
         if not is_validating:
             for layer, gradient in gradients.items():
                 dW, db = bp.backpropagate(layer)
-                gradient.add_gradient(dW, db)
+                if examples_analyzed == 0:
+                    batch_averages[layer] = [dW, db]
+
+                else:
+                    batch_averages[layer][0] += dW
+                    batch_averages[layer][1] += db
+
+            examples_analyzed += 1
+
+    # Update the EWMA with the average
+    if not is_validating and examples_analyzed > 0:
+        for layer, gradient in gradients.items():
+            dW_average, db_average = batch_averages[layer]
+
+            dW_average = dW_average / examples_analyzed
+            db_average  = db_average / examples_analyzed
+
+            gradient.add_gradient(dW_average, db_average)
+
     # Also please revise
     if is_validating:
         print(correct_count / dataset_size)

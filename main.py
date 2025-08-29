@@ -2,6 +2,8 @@ from mnist import MNIST
 
 import neural_network as nn
 import hyperparams as hp
+import parameter_stepping as step
+
 from network_interface import *
 
 
@@ -17,12 +19,14 @@ def main():
     L1_dimension = len(hp.RAW_DATA.process_images_to_lists(images[0]))
 
     neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
+    L1, L2, L3, L4 = neural_net
+    gradients = {L4: step.EWMA(), L3: step.EWMA(), L2: step.EWMA()}
 
     lowest_cost = 999999
     patience_counter =  0
     while True:
         # Train the neural network
-        train_nn(neural_net, images, labels)
+        train_nn(gradients, neural_net, images, labels)
 
         # Validate neural network
         cost = validate_nn(neural_net, test_images, test_labels)

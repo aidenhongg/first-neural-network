@@ -6,14 +6,12 @@ import parameter_stepping as step
 import hyperparams as hp
 
 
-def train_nn(neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
+def train_nn(gradients, neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
              images : list, labels : list):
     training_size = len(images)
     L1, L2, L3, L4 = neural_net
 
     for x in range(int(training_size / hp.BATCH_SIZE) + 1):
-        gradients = {L4 : step.EWMA(), L3 : step.EWMA(), L2 : step.EWMA()}
-
         # Train the neural network on a single batch
         run_batch(x, False, neural_net, images, labels, 0, gradients)
 
@@ -22,8 +20,6 @@ def train_nn(neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
             dW, db = gradient.get_gradient()
             layer.update_params(dW, db, hp.STEP_SIZE)
 
-        # After each batch
-        step.EWMA.clear_instances()
 
 def validate_nn(neural_net : tuple[nn.Layer, nn.Layer, nn.Layer, nn.Layer],
              images : list, labels : list):

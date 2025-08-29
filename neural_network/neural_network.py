@@ -61,7 +61,7 @@ class Layer:
 
 
 def He_initialization(current_dim, previous_dim):
-    seed = np.random.randint(sys.maxsize)
+    seed = np.random.randint(0, 2147483647)
     np.random.seed(seed)
     std_dev = np.sqrt(2.0 / previous_dim)
     weights = np.random.normal(loc = 0.0, scale = std_dev, size = (current_dim, previous_dim))

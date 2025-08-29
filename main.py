@@ -1,9 +1,6 @@
 from mnist import MNIST
 
-import neural_network as nn
-import hyperparams as hp
-import parameter_stepping as step
-
+import backpropagation as bp
 from network_interface import *
 
 
@@ -20,7 +17,7 @@ def main():
 
     neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
     L1, L2, L3, L4 = neural_net
-    gradients = {L4: step.EWMA(), L3: step.EWMA(), L2: step.EWMA()}
+    gradients = {L4: bp.EWMA(), L3: bp.EWMA(), L2: bp.EWMA()}
 
     lowest_cost = 999999
     patience_counter = 0
@@ -55,4 +52,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    print(main())

@@ -1,5 +1,6 @@
 import numpy as np
 import neural_network.label as lb
+import hyperparams as hp
 
 def get_CCE(output_neurons : np.array) -> float:
     """
@@ -8,8 +9,7 @@ def get_CCE(output_neurons : np.array) -> float:
     An epsilon of 10 **(-15) is used to avoid ln(0) errors.
     """
     # Add epsilon
-    epsilon = 10 **(-15)
-    output_neurons += epsilon
+    output_neurons += hp.EPSILON
 
     # get the CCE vector
     CCE = lb.current_label * np.log(output_neurons)

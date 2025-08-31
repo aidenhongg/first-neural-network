@@ -50,8 +50,7 @@ def train_nn(gradients, images : list, labels : list):
                 gradient.add_gradient(dW_average, db_average)
 
             dW, db = gradient.get_gradient()
-            layer.update_params(dW, db, hp.STEP_SIZE)
-
+            layer.update_params(dW, db, hp.LEARNING_RATE)
 
 def validate_nn(images : list, labels : list):
 

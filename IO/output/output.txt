@@ -1,0 +1,1 @@
+Accuracy: 0.9261, Lowest cost: 0.3109052564990244, Seed 714094545

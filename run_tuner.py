@@ -1,6 +1,5 @@
 import csv
 from mnist import MNIST
-import pandas as pd
 from itertools import product
 
 import hyperparams as hp
@@ -14,10 +13,14 @@ def main():
     # VARIANCE
     beta2 = [0.991, 0.993, 0.995, 0.997, 0.999]
 
-    # STEP_SIZE
+    # LEARNING_RATE
     learning_rate = [0.0001, 0.0003, 0.0005, 0.0007, 0.0009]
 
     combinations = list(product(beta1, beta2, learning_rate))
+
+    """
+    Format of cost_by_hyperparameter.csv:
+    
     columns = ["Momentum (0.85 - 0.95, 0.02)",
                                  "Variance (0.991 - 0.999, 0.002)",
                                  "Learning Rate (0.0001 - 0.0009, 0.0002)",
@@ -25,10 +28,11 @@ def main():
                                  "Lowest cost",
                                  "Highest Accuracy"]
     df = pd.DataFrame(columns = columns)
-    df.to_csv('cost_by_hyperparameter.csv', index = False)
+    df.to_csv('./output/cost_by_hyperparameter.csv', index = False)
+    """
 
     # Initialize training dataset
-    hp.RAW_DATA = MNIST('mnist_ds')
+    hp.RAW_DATA = MNIST('./IO/mnist_ds')
     images, labels = hp.RAW_DATA.load_training()
 
     # Initialize training dataset
@@ -38,7 +42,7 @@ def main():
     for row in combinations:
         hp.MOMENTUM = row[0]
         hp.VARIANCE = row[1]
-        hp.STEP_SIZE = row[2]
+        hp.LEARNING_RATE = row[2]
         lowest_cost = 1000
         best_accuracy = 0
         best_seed = 0
@@ -57,12 +61,12 @@ def main():
                 lowest_cost = cost
                 best_accuracy = accuracy
                 best_seed = seed
-        new_row = (hp.MOMENTUM, hp.VARIANCE, hp.STEP_SIZE,
+        new_row = (hp.MOMENTUM, hp.VARIANCE, hp.LEARNING_RATE,
                    best_seed, lowest_cost, best_accuracy)
         print("10 seeds trialed - entry recorded")
 
 
-        with open('cost_by_hyperparameter.csv', 'a', newline = '') as file:
+        with open('./IO/output/cost_by_hyperparameter.csv', 'a', newline = '') as file:
             writer = csv.writer(file)
             writer.writerow(new_row)
 

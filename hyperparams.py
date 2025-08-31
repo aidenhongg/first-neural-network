@@ -1,24 +1,25 @@
 from mnist import MNIST
 
-# Layer count
-LAYER_COUNT = 4
+# Dataset for modules to call universally
+RAW_DATA : MNIST = MNIST()
 
 # Batch size between each gradient adjustment
 BATCH_SIZE : int = 32
 
-# Step size
-STEP_SIZE : float = 0.0001
+# Learning rate of the model
+LEARNING_RATE : float = 0.0001
 
-# Dataset
-RAW_DATA : MNIST = MNIST()
+# Patience - stop training if cost does not decrease for this many epochs
+PATIENCE : int = 5
+PATIENCE_BUFFER : float = 0.0001
 
-# Patience
-PATIENCE : int = 3
-PATIENCE_BUFFER : float = 0.001
+# Load past conditions for testing
+# Seeds initialize the model
+LOAD_SEED : bool = True
+SEED : int = 714094545
 
-# Load past-initialized weights for testing
-LOAD_SEED : bool = False
-SEED : int = 0
+LOAD_MODEL : bool = False
+SAVE_MODEL : bool = True
 
 # Momentum and variation smoothing rates for ADAM optimization
 # MOMENTUM should be close to 1
@@ -26,5 +27,6 @@ SEED : int = 0
 MOMENTUM : float = 0.94
 VARIANCE : float = 0.99
 
+# EPSILON offset adjustments
 EPSILON : float = 10**(-15)
 

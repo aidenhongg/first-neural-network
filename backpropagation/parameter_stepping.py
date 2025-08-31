@@ -35,9 +35,11 @@ class EWMA:
         momentum_bias_hat = self.momentum_bias / (1 - hp.MOMENTUM ** 2)
 
         variance_weights_hat = self.variance_weights / (1 - hp.VARIANCE ** 2)
+        variance_weights_hat = np.maximum(variance_weights_hat, 0)
         variance_bias_hat = self.variance_bias / (1 - hp.VARIANCE ** 2)
+        variance_bias_hat = np.maximum(variance_bias_hat, 0)
 
-        final_weights = momentum_weights_hat / ((variance_weights_hat + hp.EPSILON) ** 0.5 + hp.EPSILON)
-        final_bias = momentum_bias_hat / ((variance_bias_hat + hp.EPSILON) ** 0.5 + hp.EPSILON)
+        final_weights = momentum_weights_hat / (variance_weights_hat ** 0.5 + hp.EPSILON)
+        final_bias = momentum_bias_hat / (variance_bias_hat ** 0.5 + hp.EPSILON)
 
         return final_weights, final_bias

@@ -68,9 +68,7 @@ def validate_nn(images : list, labels : list):
         total_loss += loss
 
         # See if the selection was correct for raw accuracy
-        output_list = output_neurons.flatten().tolist()
-        max_value = max(output_list)
-        selection = output_list.index(max_value)
+        selection = selection_from_output(output_neurons)
         correct_count += int(selection == label)
 
     cost = nn.get_cost(total_loss, testing_size)
@@ -95,3 +93,10 @@ def run_example(image : list, label : list):
     loss = nn.get_CCE(output_neurons)
 
     return output_neurons, loss
+
+def selection_from_output(neurons : np.ndarray):
+    output_list = neurons.flatten().tolist()
+    max_value = max(output_list)
+    selection = output_list.index(max_value)
+
+    return selection

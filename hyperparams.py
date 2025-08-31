@@ -17,8 +17,10 @@ PATIENCE_BUFFER : float = 0.0001
 # Seeds initialize the model
 LOAD_SEED : bool = True
 SEED : int = 714094545
-
+# Load previously stored parameters if True
 LOAD_MODEL : bool = False
+
+# Save trained model parameters if True
 SAVE_MODEL : bool = True
 
 # Momentum and variation smoothing rates for ADAM optimization

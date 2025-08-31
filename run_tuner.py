@@ -5,7 +5,6 @@ from itertools import product
 import hyperparams as hp
 import run_model
 
-
 def main():
     # MOMENTUM
     beta1 = [0.85, 0.87, 0.89, 0.91, 0.93, 0.95]
@@ -65,11 +64,9 @@ def main():
                    best_seed, lowest_cost, best_accuracy)
         print("10 seeds trialed - entry recorded")
 
-
         with open('./IO/output/cost_by_hyperparameter.csv', 'a', newline = '') as file:
             writer = csv.writer(file)
             writer.writerow(new_row)
-
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,5 @@
-
 import numpy as np
+
 import hyperparams as hp
 
 # Small constant to avoid divide by 0 errors

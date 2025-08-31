@@ -1,35 +1,29 @@
 from mnist import MNIST
 
+from run_epoch import *
 import backpropagation as bp
-from network_interface import *
+import neural_network
 
-
-def main():
-    # Initialize training dataset
-    hp.RAW_DATA = MNIST('mnist_ds')
-    images, labels = hp.RAW_DATA.load_training()
-
-    # Initialize training dataset
-    test_images, test_labels = hp.RAW_DATA.load_testing()
+def run(images, labels, test_images, test_labels):
+    # Clear previous models
+    neural_network.LAYERS.clear()
 
     # Instantiate all layers
     L1_dimension = len(hp.RAW_DATA.process_images_to_lists(images[0]))
-
     neural_net = (nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10))
+
     L1, L2, L3, L4 = neural_net
     gradients = {L4: bp.EWMA(), L3: bp.EWMA(), L2: bp.EWMA()}
-
     lowest_cost = 999999
     patience_counter = 0
+
     while True:
         # Train the neural network
-        train_nn(gradients, neural_net, images, labels)
+        train_nn(gradients, images, labels)
 
         # Validate neural network
-        accuracy, cost = validate_nn(neural_net, test_images, test_labels)
-
-        print(accuracy)
-        print(cost)
+        accuracy, cost = validate_nn(test_images, test_labels)
+        print(f"Epoch successful: {accuracy} accuracy, {cost} cost")
         # Buffer to only track meaningful improvements
         if cost < lowest_cost - 0.001:
             lowest_cost = cost
@@ -49,7 +43,14 @@ def main():
 
     return accuracy, lowest_cost, hp.SEED
 
-
-
 if __name__ == "__main__":
-    print(main())
+    # Initialize training dataset
+    hp.RAW_DATA = MNIST('mnist_ds')
+    images, labels = hp.RAW_DATA.load_training()
+
+    # Initialize testing dataset
+    test_images, test_labels = hp.RAW_DATA.load_testing()
+    accuracy, lowest_cost, seed = run(images, labels, test_images, test_labels)
+
+    with open("./output/output.txt", 'w') as file:
+        file.write(f"Accuracy: {accuracy}, Lowest cost: {lowest_cost}, Seed {seed}")

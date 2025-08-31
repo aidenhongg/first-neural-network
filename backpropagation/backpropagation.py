@@ -1,5 +1,6 @@
-import neural_network as nn
 import numpy as np
+
+import neural_network as nn
 from neural_network import label as lb
 
 
@@ -9,7 +10,6 @@ next_layer : nn.Layer = None
 def backpropagate(L : nn.Layer) -> tuple[np.ndarray, np.ndarray]:
     global error_signal
     global next_layer
-
     if L == nn.LAYERS[-1]:
         error_signal = CCE_softmax_der(L)
         dC_dw = error_signal @ dz_dw(L.previous_layer)

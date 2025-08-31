@@ -13,12 +13,12 @@ STEP_SIZE : float = 0.0001
 RAW_DATA : MNIST = MNIST()
 
 # Patience
-PATIENCE : int = 5
+PATIENCE : int = 3
 PATIENCE_BUFFER : float = 0.001
 
 # Load past-initialized weights for testing
 LOAD_SEED : bool = False
-SEED : int = 1922815607
+SEED : int = 0
 
 # Momentum and variation smoothing rates for ADAM optimization
 # MOMENTUM should be close to 1

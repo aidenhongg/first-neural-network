@@ -15,8 +15,9 @@ PATIENCE_BUFFER : float = 0.0001
 
 # Load past conditions for testing
 # Seeds initialize the model
-LOAD_SEED : bool = True
-SEED : int = 714094545
+LOAD_SEED : bool = False
+SEED : int = 0
+
 # Load previously stored parameters if True
 LOAD_MODEL : bool = False
 

@@ -15,8 +15,8 @@ LEARNING_RATE : float = 0.0001
 
 # Patience - stop training if cost does not decrease by PATIENCE_BUFFER amount
 # for PATIENCE # of epochs
-PATIENCE : int = 5
-PATIENCE_BUFFER : float = 0.0001
+PATIENCE : int = 3
+PATIENCE_BUFFER : float = 0.001
 
 # Load past seed conditions for testing - fixing random initialization of parameters
 LOAD_SEED : bool = False

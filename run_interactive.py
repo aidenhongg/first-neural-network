@@ -25,12 +25,12 @@ def main():
     hp.LOAD_MODEL = True
 
     # Load dataset to project-wide variable
-    hp.RAW_DATA = MNIST('./IO/mnist_ds')
-    # Initialize saved model state in ./IO/output/model as runtime model
+    hp.RAW_DATA = MNIST('_IO/mnist_ds')
+    # Initialize saved model state in ./_IO/output/model as runtime model
     run_model.run(True)
 
     # Get and print performance statistics of the loaded model
-    with open("./IO/output/model/statistics.txt", "r") as file:
+    with open("_IO/output/model/statistics.txt", "r") as file:
         stats = file.readline()
     print(f"Loaded model performance: {stats}")
 

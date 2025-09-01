@@ -47,8 +47,8 @@ def run(for_interactive = False) -> tuple[float, float, int]:
     if hp.LOAD_MODEL:
         # L{index + 2} refers to the L2, L3, L4 folders.
         for index, layer in enumerate(hidden_and_output_layers):
-            weight = np.load(f"./IO/output/model/L{index + 2}/weight.npy")
-            bias = np.load(f"./IO/output/model/L{index + 2}/bias.npy")
+            weight = np.load(f"_IO/output/model/L{index + 2}/weight.npy")
+            bias = np.load(f"_IO/output/model/L{index + 2}/bias.npy")
 
             # Set layer parameters (weight and bias) to saved parameters
             layer.weights = weight
@@ -114,14 +114,14 @@ def run(for_interactive = False) -> tuple[float, float, int]:
 
 if __name__ == "__main__":
     # Load the dataset into project-wide variable
-    hp.RAW_DATA = MNIST('./IO/mnist_ds')
+    hp.RAW_DATA = MNIST('_IO/mnist_ds')
     # Train model until sufficiently optimal, then store its stats
     accuracy, lowest_cost, seed = run()
 
     # Save the model if SAVE_MODEL flag = True
     if hp.SAVE_MODEL:
         # Output the performance statistics of the model to statistics.txt
-        with open("./IO/output/model/statistics.txt", 'w') as file:
+        with open("_IO/output/model/statistics.txt", 'w') as file:
             file.write(f"Accuracy: {accuracy}, Lowest cost: {lowest_cost}, Seed {seed}")
 
         # Store the parameters - weights and biases - to weight.npy and bias.npy
@@ -129,8 +129,8 @@ if __name__ == "__main__":
         for index, parameters in enumerate(best_parameters.values()):
             weight = parameters[0]
             bias = parameters[1]
-            np.save(f"./IO/output/model/L{index + 2}/weight.npy", weight)
-            np.save(f"./IO/output/model/L{index + 2}/bias.npy", bias)
+            np.save(f"_IO/output/model/L{index + 2}/weight.npy", weight)
+            np.save(f"_IO/output/model/L{index + 2}/bias.npy", bias)
 
         # Output status message
         print("Model saved.")

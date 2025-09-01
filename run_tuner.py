@@ -37,7 +37,7 @@ def main():
     # values to trial
     combinations = list(product(beta1, beta2, learning_rate))
 
-    csv_filepath = './IO/output/cost_by_hyperparameter.csv'
+    csv_filepath = '_IO/output/cost_by_hyperparameter.csv'
     if not os.path.exists(csv_filepath):
 
         columns = ["Momentum (0.85 - 0.95, 0.02)",
@@ -50,7 +50,7 @@ def main():
         df.to_csv(csv_filepath, index = False)
 
     # Load dataset to project-wide variable
-    hp.RAW_DATA = MNIST('./IO/mnist_ds')
+    hp.RAW_DATA = MNIST('_IO/mnist_ds')
 
     # Start iterating through all different sets of hyperparameters
     for row in combinations:
@@ -92,10 +92,10 @@ def main():
         # Inform users after each a set of hyperparameters is done testing
         print("10 seeds trialed - entry recorded")
 
-        # Record entry in persistent CSV (./IO/output/cost_by_hyperparameter.csv)
+        # Record entry in persistent CSV (./_IO/output/cost_by_hyperparameter.csv)
         new_row = (hp.MOMENTUM, hp.VARIANCE, hp.LEARNING_RATE,
                    best_seed, lowest_cost, best_accuracy)
-        with open('./IO/output/cost_by_hyperparameter.csv', 'a', newline = '') as file:
+        with open('_IO/output/cost_by_hyperparameter.csv', 'a', newline = '') as file:
             writer = csv.writer(file)
             writer.writerow(new_row)
 

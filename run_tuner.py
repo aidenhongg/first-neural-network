@@ -37,7 +37,7 @@ def main():
     # values to trial
     combinations = list(product(beta1, beta2, learning_rate))
 
-    csv_filepath = './output/cost_by_hyperparameter.csv'
+    csv_filepath = './IO/output/cost_by_hyperparameter.csv'
     if not os.path.exists(csv_filepath):
 
         columns = ["Momentum (0.85 - 0.95, 0.02)",

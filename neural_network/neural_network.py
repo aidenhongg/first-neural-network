@@ -1,11 +1,8 @@
-import numpy as np
-
-import hyperparameters_flags as hp
 from neural_network.nn_functions import *
 
 """
 neural_network.py represents the neural network.
-    -Holds layers, neurons, and parameters
+    -Holds layers, neurons, and parameters 
 """
 
 # LAYERS - project-wide container for all layer objects

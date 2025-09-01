@@ -120,7 +120,7 @@ def He_initialization(current_dim : int, previous_dim : int, seed = 0) -> tuple[
     if not seed:
         seed = np.random.randint(1, 2147483647)
 
-    # Generate random seed
+    # Set numpy seed to generated seed
     np.random.seed(seed)
 
     # He initialization is a normal random distribution based on the layer dimensions.

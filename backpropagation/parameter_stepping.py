@@ -58,7 +58,7 @@ class EWMA:
         self.time += 1
 
 
-    def get_gradient(self):
+    def get_gradient(self) -> tuple[np.ndarray, np.ndarray]:
         # Return the final gradient that will update the parameters.
 
         # Apply bias correction to get new momentum

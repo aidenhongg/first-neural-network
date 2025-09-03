@@ -36,7 +36,7 @@ For testing purposes only. Iteratively creates 1500 different models using 150 u
 
 ## Process
 
-Because of my interest in math, I did my best to calculate the derivatives myself and building my network using mostly only NumPy and the data import functions from python-mnist. My math can be found here.
+Because of my interest in math, I did my best to calculate the derivatives myself and building my network using mostly only NumPy.
 
 I tried following 3Blue1Brown's example as closely as possible - using ReLU on every layer and Mean Square Error (MSE) as the loss function. However, there were some complications I came across in the process that required me to make some changes:
   - It's unclear how parameters are randomly initialized. **If unbounded, training can be wildly inconsistent and inefficient**. Thus I looked up initialization methods and found **He initialization**, which uses a normal distribution with a standard deviation based on each layer's neuron count.

@@ -96,7 +96,7 @@ Fixing $\beta_2$ to the value that contains the minimum cost of the dataset and 
 
 <p align="center">
   <img src="./images/beta2vcostfixedLR.png" width="400">
-  <img src="./images/side_by_side_scatter2.png" width="400"/>
+  <img src="./images/beta1vcostfixedLRbeta2.png" width="400"/>
 </p>
 
 Thus, 2 sets of hyperparameters are of interest here:

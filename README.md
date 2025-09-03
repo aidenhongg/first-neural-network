@@ -20,7 +20,7 @@ Optimized default hyperparameters can be found here. These were used to train th
 ## How to use:
 There are three modules for users to run.
 #### run_interactive.py
-The most user-friendly. Loads the saved model and prints random entries from the testing set. Human users can test their prediction accuracy against the machine. 
+The most user-friendly - loads the saved model, displays random entries from the testing set, and makes predictions on those entries. Human users can test their accuracy against the machine's. 
   - If you delete the default saved model, you must train and save a new one using `run_model.py`.
 #### run_model.py
 Instantiates and trains the model.

@@ -1,3 +1,7 @@
+Using the hyperparameters mentioned in `README.md`, I was able to achieve a cost of 0.23 and an accuracy of 94.5% on some seeds.
+
+This is a unicorn model I instantiated while messing around with my model, which gave me a 0.22 cost and 95.11% accuracy.
+
 ```from mnist import MNIST
 
 # Dataset for modules to call universally

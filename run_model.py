@@ -122,7 +122,7 @@ if __name__ == "__main__":
     if hp.SAVE_MODEL:
         # Output the performance statistics of the model to statistics.txt
         with open("_IO/output/model/statistics.txt", 'w') as file:
-            file.write(f"Accuracy: {accuracy}, Lowest cost: {lowest_cost}, Seed {seed}")
+            file.write(f"Accuracy: {accuracy}, Lowest cost: {lowest_cost}, Seed: {seed}")
 
         # Store the parameters - weights and biases - to weight.npy and bias.npy
         # L2, L3, and L4 folders store parameters of each layer

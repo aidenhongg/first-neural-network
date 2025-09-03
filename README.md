@@ -54,7 +54,7 @@ I tried following 3Blue1Brown's example as closely as possible - using ReLU on e
    
       5. I was confused on whether EWMA should be updated after each batch or each example. My grad student friend **Rick Chaki** generously informed me that updates happening between examples can be more performant if the batches **have been sorted such that they each contain similar examples.** Because I was shuffling my dataset entirely randomly, I decided to **update it between batches only.**
 
-These challenges demonstrate that **although there are conventional methods** established for neural network activation and gradient stepping, **there are many details** making up these conventions that are **subject to change** depending on the **context** of the dataset and application.
+These challenges demonstrate that **although there are conventional methods** established for **neural network activation** and **gradient stepping**, **the details behind these conventions** are **subject to change** depending on the **context** of the dataset and application.
 
 ## Tuning:
 

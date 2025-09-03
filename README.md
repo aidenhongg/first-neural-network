@@ -117,6 +117,12 @@ Another limitation in my project is the lack of testing. I planned to write ever
 This was compounded by the challenges of hyperparameter tuning and the need for significant compute power. My first venture into renting and SSHing into a virtual machine was an eye-opener. While my initial thought was to use a GPU, the limitations of my NumPy-based code, which processed data sequentially on the CPU, made GPU usage surprisingly inefficient. Rather than undertake a massive rewrite to utilize CUDA arrays, I found a more practical solution in multiprocessing. This allowed me to launch multiple model instances simultaneously, leveraging cheaper, powerful CPUs and ultimately speeding up training effectively. This innovative solution, born from necessity, was a testament to the problem-solving skills required when tackling large, unplanned projects.
 
 
+run time errors
+
+
+
+floating point errors
+
 
 
 

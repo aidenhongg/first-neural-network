@@ -1,4 +1,4 @@
-from mnist import MNIST
+```from mnist import MNIST
 
 # Dataset for modules to call universally
 RAW_DATA : MNIST = MNIST()
@@ -38,3 +38,4 @@ VARIANCE : float = 0.997
 # EPSILON offset adjustments when preventing divide by 0 errors
 # A smaller EPSILON causes smaller deviations from true outputs but takes longer to calculate
 EPSILON : float = 10**(-16)
+```

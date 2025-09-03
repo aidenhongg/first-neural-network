@@ -41,7 +41,7 @@ Because of my interest in math, I did my best to calculate the derivatives mysel
 I tried following 3Blue1Brown's example as closely as possible - using ReLU on every layer and Mean Square Error (MSE) as the loss function. However, there were some complications I came across in the process that required me to make some changes:
   - It's unclear how parameters are randomly initialized. **If unbounded, training can be wildly inconsistent and inefficient**. Thus I looked up initialization methods and found **He initialization**, which uses a normal distribution with a standard deviation based on each layer's neuron count.
 
-  - **ReLU has no bounded maximum value**, meaning there's no way to create a constant ideal output vector to compare against the model's predictions. After more searching I used **SoftMax** on the last layer, which was naturally **followed by changing the loss function from MSE to CCE**.
+  - **ReLU has no bounded maximum value**, meaning there are no constant ideal output vectors to compare against the model's predictions. After more searching I used **SoftMax** on the last layer, which was naturally **followed by changing the loss function from MSE to CCE**.
     
   - He's **ambiguous** on **how** and **when** the parameters are updated after calculating the gradients, as well as how we can **avoid getting stuck** in shallow local minima.
       1. I started by shuffling the data between epochs to **introduce stochasity**.

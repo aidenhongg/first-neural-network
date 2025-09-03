@@ -52,7 +52,7 @@ I tried following 3Blue1Brown's example as closely as possible - using ReLU on e
      
       4. It turned out EWMAs are **NOT an alternative to the raw average** of gradients in a batch; they should **persist even across epochs.** This was the most crucial change that I implemented - average performance shot up to **~85%** raw accuracy after.
    
-      5. I was confused on whether EWMA should be updated after each batch or each example. My grad student friend **Rick Chaki** generously informed me that updates happening between examples can be more performant if the batches **have been sorted such that they each contain similar examples.** Because I was shuffling my dataset entirely randomly, I decided to **update it between batches only.**
+      5. I was confused on whether EWMA should be updated after each batch or each example. My grad student friend generously informed me that updates happening between examples can be more performant if the batches **have been sorted such that they each contain similar examples.** Because I was shuffling my dataset entirely randomly, I decided to **update it between batches only.**
 
 These challenges demonstrate that **although there are conventions** established for neuron activation and gradient stepping, **the details behind such conventions** are **dependent** on the **context** of the dataset and application.
 

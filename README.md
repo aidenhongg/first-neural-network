@@ -15,7 +15,7 @@ This exact model has 4 layers.
 
 Parameters are randomly set on instantiation using He initialization. The cost function is Cross Categorical-Entropy (CCE) and gradient steps are calculated with an ADAM optimizer. 
 
-Optimized default hyperparameters can be found [here](./docs/EXAMPLE.md). These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
+Optimized default hyperparameters can be found [here](./docs/EXAMPLE_MODEL.md). These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
 
 ## How to use
 There are three modules for users to run.

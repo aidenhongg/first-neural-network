@@ -1,4 +1,4 @@
-## This project was based on 3Blue1Brown's neural network series: 
+## This project was based on 3Blue1Brown's neural network series.
 
 [![Watch the video](https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg)](https://youtu.be/aircAruvnKk)
 

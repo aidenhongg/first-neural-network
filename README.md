@@ -6,7 +6,7 @@ The example network he uses is an MLP containing 4 layers - 2 hidden layers with
 
 To sum up his video series, a neural network is a large function that uses large matrix operations and differentiable activation functions. In training, it uses derivatives to find in what direction its parameters must shift to bring its outputs as close to the ideal outputs as possible. 
 
-## Description 
+## Summary: 
 This exact model has 4 layers.
 
   - **L1** - The input layer, with 784 neurons so it can accept flattened and vectorized 28 x 28 images.

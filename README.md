@@ -1,6 +1,6 @@
 ## This project was based on 3Blue1Brown's neural network series.
 
-[![Watch the video](https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg)](https://youtu.be/aircAruvnKk)
+[![3Blue1Brown](https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg)](https://youtu.be/aircAruvnKk)
 
 The example network he uses is an MLP containing 4 layers - 2 hidden layers with 16 neurons each. It predicts the digits shown in a 28 x 28 images of peoples' handwriting, so the input and output layer each have 784 and 10 neurons. This project is that example brought to life.
 
@@ -15,7 +15,7 @@ This exact model has 4 layers.
 
 Parameters are randomly set on instantiation using He initialization. The cost function is Cross Categorical-Entropy (CCE) and gradient steps are calculated with an ADAM optimizer. 
 
-Optimized default hyperparameters can be found here. These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
+Optimized default hyperparameters can be found [here](./docs/EXAMPLE.md). These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
 
 ## How to use
 There are three modules for users to run.
@@ -71,7 +71,7 @@ $\beta_2$ = `{0.991, 0.993, 0.995, 0.997, 0.999}`
 Each model was trialled using the same sample of 10 random seeds, totalling 1500 trials. 
 Then, the reported cost of each model was averaged across the 10 seeds to get an average cost.  
 
-![alt text](./images/hyperparams_summative.png)
+![summative hyperparameter graph](./images/hyperparams_summative.png)
 
 Only the learning rate initially appears to be related to average cost. Generally, as the learning rate decreases, average cost seems to decrease, but this correlation tapers off as the learning rate shifts from 0.0003 to 0.0001. Let's slice the dataset and look only at points where learning rate = 0.0003 - the cohort that represents the lowest-cost models, since that's what we're interested in.
 

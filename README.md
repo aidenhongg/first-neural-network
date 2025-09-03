@@ -100,11 +100,27 @@ Fixing $\beta_2$ to the value that contains the minimum cost of the dataset and 
 </p>
 
 Thus, 2 sets of hyperparameters are of interest here:
-  1. Learning rate = 0.0003, $\beta_1$ = 0.87, $\beta_2$ = 0.997
+  1. Learning rate = 0.0003, $\beta_1$ = 0.85, $\beta_2$ = 0.997
   2. Learning rate = 0.0003, $\beta_1$ = 0.93, $\beta_2$ = 0.997 - because it had the lowest average cost in the entire set.
 
 
 ## Final notes
+
+Building this project gave me a taste of just how difficult project management could be. I started writing this project out as quickly as I could without much of a design or the sufficient domain knowledge to know exactly what the end product would look like. 
+
+I found out about EWMAs and ADAM optimizer, and worked my gradient update intervals as I wrote. I also realized I would need to save, load, and be able to consistently initialize models for testing purposes that I had not pictured when I first started. Having to implement all these unexpected features made my codebase messier and undoubtedly racked up much technical debt. For example, there were issues where different modules would make duplicates when importing the same variable, causing state conflicts and preventing the model from training properly.
+
+Such issues led to some less-than-ideal design choices, such as having to put variables that were relevant to single classes in the global namespace of their module. I also ended up putting 'epoch.py' and 'hyperparameters_flags.py' in my root directory, when I would've liked to have put them into another module separately of the user interfaces. However, when I attempted refactoring, my program broke, and I was eventually forced to give up on these fixes.
+
+Another limitation in my project is the lack of testing. I planned to write everything out as soon as possible and do testing later, but when all was said and done, writing comprehensive tests for every single function and class all by myself seemed nearly impossible within an appopriate timeframe due to the scale and complexity of my final codebase. This made me realize that writing tests can be just as difficult, if not more, than writing the code itself, and is certainly much more tedious.
+
+This was compounded by the challenges of hyperparameter tuning and the need for significant compute power. My first venture into renting and SSHing into a virtual machine was an eye-opener. While my initial thought was to use a GPU, the limitations of my NumPy-based code, which processed data sequentially on the CPU, made GPU usage surprisingly inefficient. Rather than undertake a massive rewrite to utilize CUDA arrays, I found a more practical solution in multiprocessing. This allowed me to launch multiple model instances simultaneously, leveraging cheaper, powerful CPUs and ultimately speeding up training effectively. This innovative solution, born from necessity, was a testament to the problem-solving skills required when tackling large, unplanned projects.
+
+
+
+
+
+
 
 
 For any layer L:

@@ -17,7 +17,7 @@ Parameters are randomly set on instantiation using He initialization. The cost f
 
 Optimized default hyperparameters can be found here. These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
 
-## How to use:
+## How to use
 There are three modules for users to run.
 #### run_interactive.py
 The most user-friendly - loads the saved model, displays random entries from the testing set, and makes predictions on those entries. Human users can test their accuracy against the machine's. 

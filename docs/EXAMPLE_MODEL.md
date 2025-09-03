@@ -2,7 +2,8 @@ Using the hyperparameters mentioned in `README.md`, I was able to achieve a cost
 
 This is a unicorn model I instantiated while messing around with my model, which gave me a 0.22 cost and 95.11% accuracy.
 
-```from mnist import MNIST
+```
+from mnist import MNIST
 
 # Dataset for modules to call universally
 RAW_DATA : MNIST = MNIST()

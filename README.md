@@ -6,7 +6,7 @@ The example network he uses is an MLP containing 4 layers - 2 hidden layers with
 
 To sum up his video series, a neural network is a large function that uses large matrix operations and differentiable activation functions. In training, it uses derivatives to find in what direction its parameters must shift to bring its outputs as close to the ideal outputs as possible. 
 
-## Summary: 
+## Summary
 This exact model has 4 layers.
 
   - **L1** - The input layer, with 784 neurons so it can accept flattened and vectorized 28 x 28 images.
@@ -34,7 +34,7 @@ For testing purposes only. Iteratively creates 1500 different models using 150 u
 
 **All hyperparameters and flags** can be edited in `hyperparameters_flags.py`
 
-## Process:
+## Process
 
 Because of my interest in math, I did my best to calculate the derivatives myself and building my network using mostly only NumPy and the data import functions from python-mnist. My math can be found here.
 
@@ -56,8 +56,55 @@ I tried following 3Blue1Brown's example as closely as possible - using ReLU on e
 
 These challenges demonstrate that **although there are conventions** established for neuron activation and gradient stepping, **the details behind such conventions** are **dependent** on the **context** of the dataset and application.
 
-## Tuning:
+## Tuning
 
+The hyperparameters I tuned were $\beta_1$ and $\beta_2$ for ADAM and the learning rate. 
+
+All combinations of the following hyperparameters were tested, making 150 unique models:
+
+$\beta_1$ = `{0.85, 0.87, 0.89, 0.91, 0.93, 0.95}`
+
+$\beta_2$ = `{0.991, 0.993, 0.995, 0.997, 0.999}`
+
+`LEARNING_RATE` = `{0.0001, 0.0003, 0.0005, 0.0007, 0.0009}`
+
+Each model was trialled using the same sample of 10 random seeds, totalling 1500 trials. 
+Then, the reported cost of each model was averaged across the 10 seeds to get an average cost.  
+
+![alt text](./images/hyperparams_summative.png)
+
+Only the learning rate initially appears to be related to average cost. Generally, as the learning rate decreases, average cost seems to decrease, but this correlation tapers off as the learning rate shifts from 0.0003 to 0.0001. Let's slice the dataset and look only at points where learning rate = 0.0003 - the cohort that represents the lowest-cost models, since that's what we're interested in.
+
+<p align="center">
+<img src="./images/beta1beta2lr1analysis.png" align="middle" width="600">
+</p>
+
+Now there appears to be a correlation between each of the different $\beta_2$ and the average cost, while $\beta_1$ still has no apparent relation. This is reflected in an ordinary least squares analysis (OLS) of the current slice:
+
+  - The R-squared of average cost to $\beta_1$ and $\beta_2$ is 99.8%,
+  - $\beta_2$ has a near-0 p-score and a coefficient of 0.3917,
+  - while $\beta_1$ has a p-score of 0.912 and a coefficient of only -0.01.
+
+Thus, $\beta_1$ itself has little to no effect on average cost. However, running another OLS on how learning rate * $\beta_1$ predict average cost reveals a p-score of 0.003 and an R-squared of 71.1%. Therefore, we can conclude the following:
+  - The learning rate is the primary predictor of average cost, and an ideal rate for this network is at around 0.0003.
+  - $\beta_1$ is highly dependent on the learning rate when predicting cost.
+  - $\beta_2$ may be a largely independent predictor of average cost, given a certain learning rate.
+
+Graphing average cost in terms of $\beta_2$ itself for the previously fixed learning rate (LR = 0.0003) shows a slight correlation; as $\beta_2$ decreases, average cost may decrease as well. 
+
+Fixing $\beta_2$ to the value that contains the minimum cost of the dataset and graphing average cost in terms of $\beta_1$ reveals a much stronger relation than before.  
+
+<p align="center">
+  <img src="./images/beta2vcostfixedLR.png" width="400">
+  <img src="./images/side_by_side_scatter2.png" width="400"/>
+</p>
+
+Thus, 2 sets of hyperparameters are of interest here:
+  1. Learning rate = 0.0003, $\beta_1$ = 0.87, $\beta_2$ = 0.997
+  2. Learning rate = 0.0003, $\beta_1$ = 0.93, $\beta_2$ = 0.997 - because it had the lowest average cost in the entire set.
+
+
+## Final notes
 
 
 For any layer L:

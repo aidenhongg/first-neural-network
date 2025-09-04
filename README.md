@@ -15,7 +15,7 @@ This exact model has 4 layers.
 
 Parameters are randomly set on instantiation using He initialization. The cost function is Cross Categorical-Entropy (CCE) and gradient steps are calculated with an ADAM optimizer. 
 
-Optimized default hyperparameters can be found [here](./docs/EXAMPLE_MODEL.md). These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
+Optimized default hyperparameters can be found [here](./_docs/EXAMPLE_MODEL.md). These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
 
 ## How to use
 There are three modules for users to run.
@@ -71,12 +71,12 @@ $\beta_2$ = `{0.991, 0.993, 0.995, 0.997, 0.999}`
 Each model was trialled using the same sample of 10 random seeds, totalling 1500 trials. 
 Then, the reported cost of each model was averaged across the 10 seeds to get an average cost.  
 
-![summative hyperparameter graph](./docs/images/hyperparams_summative.png)
+![summative hyperparameter graph](./_docs/images/hyperparams_summative.png)
 
 Only the learning rate initially appears to be related to average cost. Generally, as the learning rate decreases, average cost seems to decrease, but this correlation tapers off as the learning rate shifts from 0.0003 to 0.0001. Let's slice the dataset and look only at points where learning rate = 0.0003 - the cohort that represents the lowest-cost models, since that's what we're interested in.
 
 <p align="center">
-<img src="./docs/images/beta1beta2lr1analysis.png" align="middle" width="600">
+<img src="./_docs/images/beta1beta2lr1analysis.png" align="middle" width="600">
 </p>
 
 Now there appears to be a correlation between each of the different $\beta_2$ and the average cost, while $\beta_1$ still has no apparent relation. This is reflected in an ordinary least squares analysis (OLS) of the current slice:
@@ -95,8 +95,8 @@ Graphing average cost in terms of $\beta_2$ itself for the previously fixed lear
 Fixing $\beta_2$ to the value that contains the minimum cost of the dataset and graphing average cost in terms of $\beta_1$ reveals a much stronger relation than before.  
 
 <p align="center">
-  <img src="./docs/images/beta2vcostfixedLR.png" width="400">
-  <img src="./docs/images/beta1vcostfixedLRbeta2.png" width="400"/>
+  <img src="./_docs/images/beta2vcostfixedLR.png" width="400">
+  <img src="./_docs/images/beta1vcostfixedLRbeta2.png" width="400"/>
 </p>
 
 Thus, 2 sets of hyperparameters are of interest here:

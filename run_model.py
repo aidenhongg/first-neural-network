@@ -32,50 +32,40 @@ def run(for_interactive = False) -> tuple[float, float, int]:
     images, labels = hp.RAW_DATA.load_training()
     test_images, test_labels = hp.RAW_DATA.load_testing()
 
-    # Clear previous network parameters if they persist
     nn.LAYERS.clear()
 
     # Instantiate all layers - 2 hidden layers of 16 neurons
     L1_dimension = len(hp.RAW_DATA.process_images_to_lists(images[0]))
     L1, L2, L3, L4 = nn.Layer(L1_dimension), nn.Layer(16), nn.Layer(16), nn.Layer(10)
 
-    # Also useful to have a pointer to all layers but input layers -
-    # for saving and loading parameters
     hidden_and_output_layers = nn.LAYERS[1:]
 
-    # Load saved parameters to neural network object if LOAD_MODEL = True
-    if hp.LOAD_MODEL:
+    if hp.LOAD_MODEL: # put in different method
         # L{index + 2} refers to the L2, L3, L4 folders.
         for index, layer in enumerate(hidden_and_output_layers):
             weight = np.load(f"_IO/output/model/L{index + 2}/weight.npy")
             bias = np.load(f"_IO/output/model/L{index + 2}/bias.npy")
 
-            # Set layer parameters (weight and bias) to saved parameters
             layer.weights = weight
             layer.bias = bias
 
-        # End function early and do not train model if running interactively
+        # End function early, do not train model if running interactively
         if for_interactive:
             return
 
-    # The 'gradients' dictionary attaches Exponential Weighted Moving Averages to each layer -
-    # helping calculate gradient shifts on each parameter between each batch and epoch.
+    # Attach Exponential Weighted Moving Averages to each layer
     gradients = {L4: bp.EWMA(), L3: bp.EWMA(), L2: bp.EWMA()}
-    # It is instantiated backwards for backpropagation purposes.
+    # Stored backwards for backpropagation purposes
 
-    # lowest_cost tracks the lowest cost after each epoch
     lowest_cost = np.inf
 
     # patience_counter tracks the number of epochs that fail to deliver a meaningfully lower cost
-    # - Add 1 if (cost < (lowest_cose - hp.PATIENCE_BUFFER))
-
     # If the model fails to deliver a low enough cost for enough epochs, do an early stop
-    # - if patience_counter > hp.PATIENCE, stop training loop
     patience_counter = 0
 
     # Training loop
     while True:
-        # Train the neural network
+
         train_nn(gradients, images, labels)
 
         # Validate neural network

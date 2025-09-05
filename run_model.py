@@ -26,7 +26,6 @@ run_model.run() controls all model instantiation and training operations.
         
 Returns the raw accuracy on the testing set, the average cost on the testing set, and the
 seed used when randomly initializing the network parameters, in that order. """""
-
 def run(for_interactive = False) -> tuple[float, float, int]:
     # Load training and testing dataset
     images, labels = hp.RAW_DATA.load_training()

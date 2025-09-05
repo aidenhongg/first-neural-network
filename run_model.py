@@ -12,22 +12,22 @@ run_model.py creates and trains a new model.
 # Container to hold optimized parameters before saving them to a persistent file
 best_parameters = {}
 
-def run(for_interactive = False) -> tuple[float, float, int]:
-    """"
-    run_model.run() controls all model instantiation and training operations.
+""""
+run_model.run() controls all model instantiation and training operations.
     
-    1. Instantiates neural network object
-    2. Loads saved model states
-    3. Trains the model using a mainloop
-        On each iteration:
-        -Trains the model on an epoch of the training data
-        -Validates the model using the testing data and the CCE cost function
-        -Handles early stop using PATIENCE and PATIENCE_BUFFER hyperparameters
-        specified in hyperparameters_flags.py
+1. Instantiates neural network object
+2. Loads saved model states
+3. Trains the model using a mainloop
+    On each iteration:
+    -Trains the model on an epoch of the training data
+    -Validates the model using the testing data and the CCE cost function
+    -Handles early stop using PATIENCE and PATIENCE_BUFFER hyperparameters
+    specified in hyperparameters_flags.py
         
-    Returns the raw accuracy on the testing set, the average cost on the testing set, and the
-    seed used when randomly initializing the network parameters, in that order. """""
+Returns the raw accuracy on the testing set, the average cost on the testing set, and the
+seed used when randomly initializing the network parameters, in that order. """""
 
+def run(for_interactive = False) -> tuple[float, float, int]:
     # Load training and testing dataset
     images, labels = hp.RAW_DATA.load_training()
     test_images, test_labels = hp.RAW_DATA.load_testing()

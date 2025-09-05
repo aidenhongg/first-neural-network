@@ -7,13 +7,7 @@ import backpropagation as bp
 run_model.py creates and trains a new model.
     -Applies the PATIENCE and PATIENCE_BUFFER hyperparameters between epochs
     -Responsible for loading the saved model if LOAD_MODEL = True
-    -Saves the model, the SEED used to train it, and its stats if SAVE_MODEL = True """
-
-# Container to hold optimized parameters before saving them to a persistent file
-best_parameters = {}
-
-""""
-run_model.run() controls all model instantiation and training operations.
+    -Saves the model, the SEED used to train it, and its stats if SAVE_MODEL = True 
     
 1. Instantiates neural network object
 2. Loads saved model states
@@ -23,7 +17,14 @@ run_model.run() controls all model instantiation and training operations.
     -Validates the model using the testing data and the CCE cost function
     -Handles early stop using PATIENCE and PATIENCE_BUFFER hyperparameters
     specified in hyperparameters_flags.py
-        
+"""
+
+# Container to hold optimized parameters before saving them to a persistent file
+best_parameters = {}
+
+""""
+run_model.run() controls all model instantiation and training operations.
+
 Returns the raw accuracy on the testing set, the average cost on the testing set, and the
 seed used when randomly initializing the network parameters, in that order. """""
 def run(for_interactive = False) -> tuple[float, float, int]:

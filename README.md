@@ -1,119 +1,78 @@
-## This project was based on 3Blue1Brown's neural network series.
+# MNIST Digit Classifier — From-Scratch MLP
 
-[![3Blue1Brown](https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg)](https://youtu.be/aircAruvnKk)
+Built from [3Blue1Brown's neural network series](https://youtu.be/aircAruvnKk), implemented using only NumPy. Hand-derived backpropagation gradients. **95.11% accuracy, ~0.224 cost.**
 
-The example network he uses is an MLP containing 4 layers - 2 hidden layers with 16 neurons each. It predicts the digits shown in a 28 x 28 images of peoples' handwriting, so the input and output layer each have 784 and 10 neurons. This project is that example brought to life.
+## Skills & Frameworks
 
-To sum up his video series, a neural network is a large function that uses large matrix operations and differentiable activation functions. In training, it uses derivatives to find in what direction its parameters must shift to bring its outputs as close to the ideal outputs as possible. 
+**Languages:** Python  
+**Libraries:** NumPy, pandas, Matplotlib, python-mnist  
+**Concepts:** Multilayer perceptron, backpropagation (hand-derived), He initialization, ReLU, SoftMax, cross-categorical entropy (CCE), ADAM optimizer, EWMA, hyperparameter grid search, early stopping, seed-controlled reproducibility, multiprocessing
 
-## Summary
-This exact model has 4 layers.
+## Architecture
 
-  - **L1** - The input layer, with 784 neurons so it can accept flattened and vectorized 28 x 28 images.
-  - **L2 / L3** - Hidden layers with 16 neurons each and ReLU activation. 
-  - **L4** - Output layer with 10 neurons, each representing a digit. SoftMax activation.
+| Layer | Neurons | Activation |
+|-------|---------|------------|
+| L1 (input) | 784 | — |
+| L2 (hidden) | 16 | ReLU |
+| L3 (hidden) | 16 | ReLU |
+| L4 (output) | 10 | SoftMax |
 
-Parameters are randomly set on instantiation using He initialization. The cost function is Cross Categorical-Entropy (CCE) and gradient steps are calculated with an ADAM optimizer. 
+- **Initialization:** He (normal distribution scaled by layer width)
+- **Loss:** CCE
+- **Optimizer:** ADAM with bias correction
+- **Early stopping:** patience-based on cost plateau
 
-Optimized default hyperparameters can be found [here](./_docs/EXAMPLE_MODEL.md). These were used to train the current saved model, which has a 95.11% raw accuracy and ~0.224 cost.
+Default hyperparameters: [EXAMPLE_MODEL.md](./_docs/EXAMPLE_MODEL.md)
 
-## How to use
-There are three modules for users to run.
-#### run_interactive.py
-The most user-friendly - loads the saved model, displays random entries from the testing set, and makes predictions on those entries. Human users can test their accuracy against the machine's. 
-  - If you delete the default saved model, you must train and save a new one using `run_model.py`.
-#### run_model.py
-Instantiates and trains the model.
-  - `LOAD_SEED`: if `True`, load the seed and fix parameter initialization.
-  - `SEED`: set the seed that `LOAD_SEED` uses.
-  - `LOAD_MODEL`: if `True`, load the model in `./_IO/output/model`.
-  - `SAVE_MODEL`: if `True`, overwrite the model in  `./_IO/output/model` and save the current model after training.
-#### run_tuner.py
-For testing purposes only. Iteratively creates 1500 different models using 150 unique hyperparameters and 10 different random seeds each. 
-  - The lowest-cost model for each set of hyperparameters, along with the correlated seed and raw accuracy are recorded in `./_IO/output/cost_by_hyperparameter.csv`.
+## Technical Challenges & Solutions
 
-**All hyperparameters and flags** can be edited in `hyperparameters_flags.py`
+1. **Unbounded random init caused inconsistent training.** Solved with He initialization — normal distribution with std dev scaled to neuron count per layer.
 
-## Process
+2. **ReLU on the output layer has no bounded max, so no stable target vectors exist.** Switched the output layer to SoftMax and replaced MSE with CCE accordingly.
 
-Because of my interest in math, I did my best to calculate the derivatives myself before checking them and building my network using mostly only NumPy.
+3. **EWMA persistence bug:** Initially reset momentum/variance EWMAs after each batch (same lifecycle as the raw gradient average). Training capped at ~40% accuracy. Fixing EWMAs to persist across batches and epochs immediately jumped accuracy to ~85% — the single highest-impact fix.
 
-I tried following 3Blue1Brown's example as closely as possible - using ReLU on every layer and Mean Square Error (MSE) as the loss function. However, there were some complications I came across in the process that required me to make some changes:
-  - It's unclear how parameters are randomly initialized. **If unbounded, training can be wildly inconsistent and inefficient**. Thus I looked up initialization methods and found **He initialization**, which uses a normal distribution with a standard deviation based on each layer's neuron count.
+4. **EWMA update granularity:** Chose per-batch updates over per-example because the dataset is shuffled randomly (no intra-batch similarity to exploit).
 
-  - **ReLU has no bounded maximum value**, meaning there are no constant ideal output vectors to compare against the model's predictions. After more searching I used **SoftMax** on the last layer, which was naturally **followed by changing the loss function from MSE to CCE**.
-    
-  - He's **ambiguous** on **how** and **when** the parameters are updated after calculating the gradients, as well as how we can **avoid getting stuck** in shallow local minima.
-      1. I started by shuffling the data between epochs to **introduce stochasity**.
-         
-      2. I found I could alternatively **use an Exponential Weighted Moving Average (EWMA) to weight gradients based on recency**, instead of a simple raw average. This led me to add one EWMA and rig up what was essentially a RMSProp, but due to being implemented the same way as my raw average, it was **updated on every example and reset after every batch.**
-         
-      3. My model performance became **incredibly low** (40% accuracy at best), so I went looking for another optimizer and found ADAM. My model still struggled with ADAM.
-     
-      4. It turned out EWMAs are **NOT an alternative to the raw average** of gradients in a batch; they should **persist even across epochs.** This was the most crucial change that I implemented - average performance shot up to **~85%** raw accuracy after.
-   
-      5. I was confused on whether EWMA should be updated after each batch or each example. My grad student friend generously informed me that updates happening between examples can be more performant if the batches **have been sorted such that they each contain similar examples.** Because I was shuffling my dataset entirely randomly, I decided to **update it between batches only.**
+5. **CuPy/GPU attempt failed** — repeated host-to-device transfers on unvectorized, single-example forward passes negated GPU gains. The architecture doesn't support batched matrix ops without a rewrite. Solved with `multiprocessing` (32 parallel training processes) instead.
 
-These challenges demonstrate that **although there are conventions** established for neuron activation and gradient stepping, **the details behind such conventions** are **dependent** on the **context** of the dataset and application.
+## Hyperparameter Tuning
 
-## Tuning
+Grid search over ADAM's $\beta_1$, $\beta_2$, and learning rate — 150 unique configurations, 10 seeds each (1,500 total trials).
 
-The hyperparameters I tuned were $\beta_1$ and $\beta_2$ for ADAM and the learning rate. 
-
-All combinations of the following hyperparameters were tested, making 150 unique models:
-
-$\beta_1$ = `{0.85, 0.87, 0.89, 0.91, 0.93, 0.95}`
-
-$\beta_2$ = `{0.991, 0.993, 0.995, 0.997, 0.999}`
-
-`LEARNING_RATE` = `{0.0001, 0.0003, 0.0005, 0.0007, 0.0009}`
-
-Each model was trialled using the same sample of 10 random seeds, totalling 1500 trials. 
-Then, the reported cost of each model was averaged across the 10 seeds to get an average cost.  
+$\beta_1$ = `{0.85, 0.87, 0.89, 0.91, 0.93, 0.95}`  
+$\beta_2$ = `{0.991, 0.993, 0.995, 0.997, 0.999}`  
+`learning_rate` = `{0.0001, 0.0003, 0.0005, 0.0007, 0.0009}`
 
 ![summative hyperparameter graph](./_docs/images/hyperparams_summative.png)
 
-Only the learning rate initially appears to be related to average cost. Generally, as the learning rate decreases, average cost seems to decrease, but this correlation tapers off as the learning rate shifts from 0.0003 to 0.0001. Let's slice the dataset and look only at points where learning rate = 0.0003 - the cohort that represents the lowest-cost models, since that's what we're interested in.
+**Key findings (OLS regression on the LR=0.0003 slice):**
+- Learning rate is the dominant predictor of cost. Optimal value: ~0.0003.
+- $\beta_2$ is a significant independent predictor (p ~ 0, coefficient 0.39, R-squared 99.8% jointly).
+- $\beta_1$ alone has no significant effect (p = 0.912) but interacts with learning rate (p = 0.003, R-squared 71.1%).
 
 <p align="center">
-<img src="./_docs/images/beta1beta2lr1analysis.png" align="middle" width="600">
+<img src="./_docs/images/beta1beta2lr1analysis.png" width="600">
 </p>
-
-Now there appears to be a correlation between each of the different $\beta_2$ and the average cost, while $\beta_1$ still has no apparent relation. This is reflected in an ordinary least squares analysis (OLS) of the current slice:
-
-  - The R-squared of average cost to $\beta_1$ and $\beta_2$ is 99.8%,
-  - $\beta_2$ has a near-0 p-score and a coefficient of 0.3917,
-  - while $\beta_1$ has a p-score of 0.912 and a coefficient of only -0.01.
-
-Thus, $\beta_1$ itself has little to no effect on average cost. However, running another OLS on how learning rate * $\beta_1$ predict average cost reveals a p-score of 0.003 and an R-squared of 71.1%. Therefore, we can conclude the following:
-  - The learning rate is the primary predictor of average cost, and an ideal rate for this network is at around 0.0003.
-  - $\beta_1$ is highly dependent on the learning rate when predicting cost.
-  - $\beta_2$ may be a largely independent predictor of average cost, given a certain learning rate.
-
-Graphing average cost in terms of $\beta_2$ itself for the previously fixed learning rate (LR = 0.0003) shows a slight correlation; as $\beta_2$ decreases, average cost may decrease as well. 
-
-Fixing $\beta_2$ to the value that contains the minimum cost of the dataset and graphing average cost in terms of $\beta_1$ reveals a much stronger relation than before.  
 
 <p align="center">
   <img src="./_docs/images/beta2vcostfixedLR.png" width="400">
   <img src="./_docs/images/beta1vcostfixedLRbeta2.png" width="400"/>
 </p>
 
-Thus, 2 sets of hyperparameters are of interest here:
-  1. Learning rate = 0.0003, $\beta_1$ = 0.85, $\beta_2$ = 0.997
-  2. Learning rate = 0.0003, $\beta_1$ = 0.93, $\beta_2$ = 0.997 - because it had the lowest average cost in the entire dataset.
+**Optimal hyperparameters:** LR = 0.0003, $\beta_1$ = 0.93, $\beta_2$ = 0.997 (lowest average cost across all trials).
 
+## Usage
 
-## Final notes
+| Module | Purpose |
+|--------|---------|
+| `run_interactive.py` | Load saved model, predict random test images, compare human vs. machine accuracy |
+| `run_model.py` | Train a new model (flags: `LOAD_SEED`, `LOAD_MODEL`, `SAVE_MODEL`) |
+| `run_tuner.py` | Grid search over 1,500 hyperparameter/seed combinations |
 
-Building this project showed me **how complex project management could be**. I started writing quickly, **without a clear design** or the **sufficient domain knowledge** to know exactly how the **end product would look**. 
+All flags and hyperparameters are configured in `hyperparameters_flags.py`.
 
-I found out about **EWMAs and ADAM optimizer**, how to **update my gradients**, and the need to **save, load, and consistently initialize models** for testing purposes, as I wrote. These were all functions I had not foreseen. Implementing them **made my codebase messier** and undoubtedly **racked up technical debt**. For example, different modules sometimes duplicated the **same variable**, creating **state conflicts** and preventing proper training.
+## Reflections
 
-  - This caused some bad design choices, such as putting variables only relevant to single classes in their modules' global namespaces. 'epoch.py' and 'hyperparameters_flags.py' are in the root, when they should be in a directory separate of the user interfaces. When I attempted refactoring to fix these concerns, my program malfunctioned.
-
-Another limitation is the **lack of testing**. I planned to write everything quickly and test later. When all was said and done, **writing a comprehensive suite for every single component all by myself seemed nearly impossible** within an appopriate timeframe due to the scale and complexity of the final codebase. It became readily apparent how **writing tests can be just as difficult**, if not more, than writing the code itself, and is certainly much more tedious.
-
-Using NumPy and **analyzing each data point sequentially** greatly **complicated hyperparameter tuning**. I attempted **switching NumPy out for CuPy** and renting out an L4 card, but this caused my training to **slow down**. I suspect this because the program **repeatedly transferred arrays to CUDA** and used **unvectorized data**. Unfortunately my network components **could not accept n-sized matrices**, and due to my **lack of planning**, adding such a functionality would be akin to **rewriting the codebase entirely**.
-
-I ended up rigging together a solution with `multiprocessing`, launching 32 different training processes simultaneously. (I've not included this version of run_tuner, assuming that most users won't have 32-core machines). This turned out to have its upsides, because my model isn't so compute-heavy in the first place (being an MLP with only 830 neurons in total). It could still run mass trials relatively fast on a CPU-based machine, which are much cheaper than L4s nowadays.
+- **Testing debt:** Deferred unit tests during rapid prototyping. Retrofitting a comprehensive suite onto a tightly coupled codebase proved impractical — reinforced the value of test-first development.
+- **Architecture rigidity:** Single-example forward passes made GPU acceleration and batched operations impossible without a full rewrite. Better upfront design of the data pipeline would have avoided this.
